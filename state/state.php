@@ -1,58 +1,65 @@
 <?php
-interface State { // 抽象状态角色
-    public function handle(Context $context); // 方法示例
+
+// 在状态模式（State Pattern）中，类的行为是基于它的状态改变的。这种类型的设计模式属于行为型模式。
+
+
+interface State {
+    public function doAction($context);
 }
 
-class ConcreteStateA implements State { // 具体状态角色A
-    private static $_instance = null;
-    private function __construct() {}
-    public static function getInstance() { // 静态工厂方法，返还此类的唯一实例
-        if (is_null(self::$_instance)) {
-            self::$_instance = new ConcreteStateA();
-        }
-        return self::$_instance;
-    }
- 
-    public function handle(Context $context) {
-        echo 'concrete_a'."<br>";
-        $context->setState(ConcreteStateB::getInstance());
-    }
- 
-}
+class StartState implements State {
 
-class ConcreteStateB implements State { // 具体状态角色B
-    private static $_instance = null;
-    private function __construct() {}
-    public static function getInstance() {
-        if (is_null(self::$_instance)) {
-            self::$_instance = new ConcreteStateB();
-        }
-        return self::$_instance;
+    public function doAction($context) {
+        echo "Player is in start state<br/>";
+        $context->setState($this);    
     }
- 
-    public function handle(Context $context) {
-        echo 'concrete_b'."<br>";
-        $context->setState(ConcreteStateA::getInstance());
+
+    public function toString(){
+        return "Start State";
     }
 }
 
-class Context { // 环境角色 
-    private $_state;
-    public function __construct() { // 默认为stateA
-        $this->_state = ConcreteStateA::getInstance();
+
+class StopState implements State {
+
+    public function doAction($context) {
+        echo "Player is in stop state<br/>";
+        $context->setState($this);    
     }
-    public function setState(State $state) {
-        $this->_state = $state;
-    }
-    public function request() {
-        $this->_state->handle($this);
+
+    public function toString(){
+        return "Stop State";
     }
 }
 
-// client
+
+class Context {
+    private $state;
+
+    public function __construct(){
+        $this->state = null;
+    }
+
+    public function setState($state){
+        $this->state = $state;        
+    }
+
+    public function getState(){
+        return $this->state;
+    }
+}
+
+
 $context = new Context();
-$context->request();
-$context->request();
-$context->request();
-$context->request();
-?>
+
+$startState = new StartState();
+$startState->doAction($context);
+
+echo $context->getState()->toString()."<br/>";
+
+$stopState = new StopState();
+$stopState->doAction($context);
+
+echo $context->getState()->toString()."<br/>";
+
+
