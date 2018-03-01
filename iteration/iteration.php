@@ -1,26 +1,31 @@
 <?php
+
+// 迭代：自己调用自己，比如foreach一个数组，该数组不断地自己调用自己打印出内部一个个的元素
+// php.net官方文档之中的Iterator（迭代器）接口有五个抽象方法
+
 class sample implements Iterator {
     private $_items ;
  
     public function __construct(&$data) {
         $this->_items = $data;
     }
+    // // Iterator::current — 返回当前元素
     public function current() {
         return current($this->_items);
     }
- 
+    // Iterator::next — 向前移动到下一个元素
     public function next() {
         next($this->_items);   
     }
- 
+    // Iterator::key — 返回当前元素的键
     public function key() {
         return key($this->_items);
     }
- 
+    // 返回第一个
     public function rewind() {
         reset($this->_items);
     }
- 
+    // Iterator::valid — 检查当前位置是否有效
     public function valid() {                                                                              
         return ($this->current() !== FALSE);
     }
@@ -34,77 +39,13 @@ foreach ($sa AS $key => $row) {
 }
 
 
-//Yii FrameWork Demo
-class CMapIterator implements Iterator {
-/**
-* @var array the data to be iterated through
-*/
-    private $_d;
-/**
-* @var array list of keys in the map
-*/
-    private $_keys;
-/**
-* @var mixed current key
-*/
-    private $_key;
- 
-/**
-* Constructor.
-* @param array the data to be iterated through
-*/
-    public function __construct(&$data) {
-        $this->_d=&$data;
-        $this->_keys=array_keys($data);
-    }
- 
-/**
-* Rewinds internal array pointer.
-* This method is required by the interface Iterator.
-*/
-    public function rewind() {                                                                                 
-        $this->_key=reset($this->_keys);
-    }
- 
-/**
-* Returns the key of the current array element.
-* This method is required by the interface Iterator.
-* @return mixed the key of the current array element
-*/
-    public function key() {
-        return $this->_key;
-    }
- 
-/**
-* Returns the current array element.
-* This method is required by the interface Iterator.
-* @return mixed the current array element
-*/
-    public function current() {
-        return $this->_d[$this->_key];
-    }
- 
-/**
-* Moves the internal pointer to the next array element.
-* This method is required by the interface Iterator.
-*/
-    public function next() {
-        $this->_key=next($this->_keys);
-    }
- 
-/**
-* Returns whether there is an element at current position.
-* This method is required by the interface Iterator.
-* @return boolean
-*/
-    public function valid() {
-        return $this->_key!==false;
-    }
-}
- 
-$data = array('s1' => 11, 's2' => 22, 's3' => 33);
-$it = new CMapIterator($data);
-foreach ($it as $row) {
-    echo $row, '<br />';
-}
+// foreach一个数组，好理解，调用迭代器不断读取自身元素，指针往后走，那么调用一个对象呢，如何用迭代顺序访问集合对象的元素，而又不需要知道集合对象的底层表示。就是将这个对象作为迭代器的实现。
+
+//  使用场景：   
+// 1.访问一个聚合对象的内容而无需暴露它的内部表示
+
+// 2.支持对聚合对象的多种遍历
+
+// 3.为遍历不同的聚合结构提供一个统一的接口
+
 ?>
